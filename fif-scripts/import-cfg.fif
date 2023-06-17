@@ -1,0 +1,23 @@
+{ show-options-help 1 halt } : usage
+
+begin-options
+    "<filename> <param> [<savefile>]" +cr +cr
+    +"converts config <param> from json file <filename>, then" +cr
+    +"saves it to <savefile>.boc ('cfg.<param>.boc' by default)" +cr
+
+    disable-digit-options generic-help-setopt
+
+    "h" "--help" { usage } short-long-option
+        9 chr +"shows a help message" option-help
+parse-options
+
+$# dup 2 < swap 3 > or ' usage if
+3 :$1..n
+
+$1 =: filename
+$2 parse-int =: param
+$3 "cfg." param (.) $+ replace-if-null =: savefile
+
+filename file>B B>$ param $j>cfg
+2 boc+>B savefile +".boc" tuck B>file
+"config param " param (.) $+ +" boc saved to file: '" type type ."'" cr

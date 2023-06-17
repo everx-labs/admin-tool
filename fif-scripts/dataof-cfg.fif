@@ -1,0 +1,27 @@
+{ show-options-help 1 halt } : usage
+
+begin-options
+    "<url>" +cr +cr
+    +"sends request to the given <url> gql endpoint," +cr
+    +"prints parsed config smc data to standard output" +cr
+
+    disable-digit-options generic-help-setopt
+
+    "h" "--help" { usage } short-long-option
+        9 chr +"shows a help message" option-help
+parse-options
+
+$# 1 = not ' usage if
+$1 =: url
+
+"-1:5555555555555555555555555555555555555555555555555555555555555555"
+parse-smc-addr drop url ~>acc 1 [] 1 [] =: data
+
+{ 34 emit } : '" { ."    " } : 4_
+
+data <s 32 u@+ 32 B@ =: public_key =: stored_seqno
+
+."{ " cr
+    4_ '" ."stored_seqno" '" .": " stored_seqno (.) type .", " cr
+    4_ '" ."public_key" '" .": " '" public_key B>x type '" cr
+."}" cr

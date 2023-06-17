@@ -1,0 +1,50 @@
+{ show-options-help 1 halt } : usage
+
+60 =: exp-t
+
+begin-options
+    "<filebase> <param-boc> <param> <seqno> [<savefile>]" +cr +cr
+    +"creates an external message to the config smc, to update <param>, with" +cr
+    +"parameter boc loaded from <param-boc> file, sets <seqno> in msg, using the" +cr
+    +"<filebase>.pk for signing, saves it to <savefile>.boc ('cfg-req.boc' by default)" +cr
+
+    disable-digit-options generic-help-setopt
+    "t" "--expt" { parse-int =: exp-t } short-long-option-arg
+        "sets expiration timeout in seconds (" exp-t (.) $+ +" by default)" option-help
+    "s" "--sgid" { parse-int =: sgid } short-long-option-arg
+        "sets signature id (for signature id capability)" option-help
+    "h" "--help" { usage } short-long-option
+        9 chr +"shows a help message" option-help
+parse-options
+
+$# dup 4 < swap 5 > or ' usage if
+5 :$1..n
+
+$1 =: filebase
+$2 file>B B>boc =: param-boc
+$3 parse-int =: param
+$4 parse-int =: seqno
+$5 "cfg-req" replace-if-null =: savefile
+
+"-1:5555555555555555555555555555555555555555555555555555555555555555"
+parse-smc-addr drop 2=: config-addr
+
+filebase +".pk" load-keypair cr nip =: priv-key
+{ <b swap 32 i, b> <s 4 B@ } : i>sgidB
+
+<b 0x43665021 32 u, seqno 32 u, now exp-t + 32 u,
+param 32 i, param-boc ref, b> =: payload
+
+payload hashB
+def? sgid { @' sgid i>sgidB swap B+ } if
+priv-key ed25519_sign =: sign
+
+<b sign B, payload <s s, b> =: body
+
+<b b{1000} s, config-addr Addr,
+0 Gram, b{00} s, body <s s, b>
+
+dup hashB ."external message hash: " cr B>x type cr cr
+
+2 boc+>B savefile +".boc" tuck B>file
+."saved external message to file: " type cr

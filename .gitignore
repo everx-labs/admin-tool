@@ -1,0 +1,35 @@
+# vscode
+.vscode/*
+!.vscode/settings.json
+.history/
+*.vsix
+
+# idea
+.idea
+
+# cmake
+build
+cmake-build-debug
+cmake-build-release
+
+# rust
+json-block/target
+
+# generated
+generated/lib/*
+generated/fif-scripts/*
+!generated/lib/.gitkeep
+!generated/fif-scripts/.gitkeep
+generated/generated.hpp
+
+# env
+.env
+
+# Mac OS General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# other
+*.log
+
