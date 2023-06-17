@@ -2,6 +2,7 @@
 
 #include "fmt/core.h"
 #include "json-block.h"
+#include "nlohmann/json.hpp"
 
 #include "crypto/vm/cellslice.h"
 #include "crypto/vm/boc.h"
@@ -18,6 +19,8 @@
 
 #include "generated/generated.hpp"
 #include "gql-client/gql-client.hpp"
+
+using json = nlohmann::json;
 
 #define HARD_CODE "hard_code"
 #define FIF_UNWRAP(E, C) (static_cast<td::FifRes<int>&&>(E)).unwrap_fift_error(C)
@@ -70,15 +73,16 @@ void interpret_cfg_param_to_json(vm::Stack& stack) {
     auto to_bind = td::str_base64_encode(boc.serialize_to_string());
     auto result = config_param_boc_to_json(to_bind, param);
 
-    stack.push_string(result.str);
+    stack.push_string(json::parse(result.str)["p" + std::to_string(param)].dump());
 }
 
 void interpret_json_to_cfg_param(vm::Stack& stack) {
     stack.check_underflow(2);
     auto param = stack.pop_smallint_range(INT32_MAX, INT32_MIN);
-    auto json = stack.pop_string();
+    auto json_str = stack.pop_string();
 
-    auto cfg_param_boc = config_param_json_to_boc(json, param);
+    json json_wrapped = {{"p" + std::to_string(param), json::parse(json_str)}};
+    auto cfg_param_boc = config_param_json_to_boc(json_wrapped.dump(), param);
     auto cfg_param_cell = base64_boc_to_cell(cfg_param_boc.str);
 
     stack.push_cell(cfg_param_cell);
