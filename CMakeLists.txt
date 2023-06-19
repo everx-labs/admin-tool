@@ -4,6 +4,7 @@ project(admin-tool)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(JSON_BLOCK_BUILD_FLAG)
@@ -13,13 +14,22 @@ else ()
     set(JSON_BLOCK_TARGET_PATH release)
 endif ()
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+
+if (NOT MSVC)
+  set(CMAKE_CXX_FLAGS "-Os -Wall -Wextra")
+endif()
+
+set(TON_USE_ROCKSDB "OFF")
+
 add_subdirectory(third-party/fmt)
 add_subdirectory(third-party/ton)
 add_subdirectory(third-party/json)
 add_subdirectory(third-party/curlpp)
 
 set(TON_ARCH "${TON_ARCH}")
-set(TON_USE_ROCKSDB "${TON_USE_ROCKSDB}")
 
 include_directories(third-party/json/include)
 

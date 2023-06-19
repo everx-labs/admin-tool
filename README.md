@@ -30,7 +30,7 @@ g++ or clang (or another C++20 compatible compiler).
 4. Configure and compile
 ```bash
 mkdir build && cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DTON_USE_ROCKSDB="OFF" ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 cmake --build . -j 12 --target admin-tool
 ```
 

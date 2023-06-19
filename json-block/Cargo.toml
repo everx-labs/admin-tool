@@ -14,3 +14,10 @@ serde_json = { features = ["preserve_order"], version = '1.0' }
 
 [lib]
 crate-type = ["staticlib"]
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+panic = "abort"
+codegen-units = 1
