@@ -143,13 +143,6 @@ void init_words_admin_tool(Dictionary& d) {
 
 }
 
-const std::pair<std::string, std::string> COMMANDS[] = {
-    std::make_pair("export-cfg", "export blockchain config to json"),
-    std::make_pair("import-cfg", "import blockchain config from json"),
-    std::make_pair("extmsg-cfg", "prepare ext message for config smc"),
-    std::make_pair("dataof-cfg", "show basic information of config smc"),
-};
-
 namespace td {
 
 template <class T = td::Unit>
@@ -170,10 +163,14 @@ void usage(const char* prog) {
     std::cerr << "admin-tool – everscale network management kit\n\n";
     std::cerr << fmt::format("usage: {} <command> [args]\n\n", prog);
 
-    std::cerr << "commands:\n";
-    for (auto c : COMMANDS) {
-        std::cerr << fmt::format("\t{}\t{}\n", c.first, c.second);
-    }
+    std::cerr << "commands:\n"
+                 "\texport-cfg\texport blockchain config to json\n"
+                 "\timport-cfg\timport blockchain config from json\n"
+                 "\textmsg-cfg\tprepare ext message for config smc\n"
+                 "\tdataof-cfg\tshow basic information of config smc\n"
+                 "\n"
+                 "\textmsg-chk\tprepare ext message for extmsg-test\n"
+                 "\tdataof-chk\tshow basic information of extmsg-test\n";
 
     std::cerr << "\narguments:"
                  "\n\t-v <lvl>\tset verbosity level\n"
@@ -245,27 +242,39 @@ int main(int argc, char* const argv[]) {
     fift.interpret_istream(FiftDecl::is_TONUTIL_FIF, HARD_CODE, false);
     fift.interpret_istream(FiftDecl::is_GETOPT_FIF,  HARD_CODE, false);
 
-    if (command == COMMANDS[0].first /* export-cfg */) {
+    if (command == "export-cfg") {
         FIF_UNWRAP(fift.interpret_istream(FiftDecl::is_EXPORT_CFG_FIF,
-                                          HARD_CODE,false), command);
+                                          HARD_CODE, false), command);
         return 0;
     }
 
-    if (command == COMMANDS[1].first /* import-cfg */) {
+    if (command == "import-cfg") {
         FIF_UNWRAP(fift.interpret_istream(FiftDecl::is_IMPORT_CFG_FIF,
-                                          HARD_CODE,false), command);
+                                          HARD_CODE, false), command);
         return 0;
     }
 
-    if (command == COMMANDS[2].first /* extmsg-cfg */) {
+    if (command == "extmsg-cfg") {
         FIF_UNWRAP(fift.interpret_istream(FiftDecl::is_EXTMSG_CFG_FIF,
-                                          HARD_CODE,false), command);
+                                          HARD_CODE, false), command);
         return 0;
     }
 
-    if (command == COMMANDS[3].first /* dataof-cfg */) {
+    if (command == "dataof-cfg") {
         FIF_UNWRAP(fift.interpret_istream(FiftDecl::is_DATAOF_CFG_FIF,
-                                          HARD_CODE,false), command);
+                                          HARD_CODE, false), command);
+        return 0;
+    }
+
+    if (command == "extmsg-chk") {
+        FIF_UNWRAP(fift.interpret_istream(FiftDecl::is_EXTMSG_CHK_FIF,
+                                          HARD_CODE, false), command);
+        return 0;
+    }
+
+    if (command == "dataof-chk") {
+        FIF_UNWRAP(fift.interpret_istream(FiftDecl::is_DATAOF_CHK_FIF,
+                                          HARD_CODE, false), command);
         return 0;
     }
 

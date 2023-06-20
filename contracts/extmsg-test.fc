@@ -1,0 +1,42 @@
+#pragma version >=0.4.3;
+#include "../third-party/ton/crypto/smartcont/stdlib.fc";
+
+;;
+;; a simple contract to check broadcasting of ext messages
+;;
+
+() recv_external(slice in_msg) impure {
+    slice sign = in_msg~load_bits(512);
+    slice cs = in_msg;
+
+    int valid_until = cs~load_uint(64);
+    int msg_seqno   = cs~load_uint(16); 
+
+    throw_if(100, valid_until <= now());
+
+    slice ds = get_data().begin_parse();
+    int public_key   = ds~load_uint(256);
+    int stored_seqno = ds~load_uint(16);
+
+    throw_unless(101, msg_seqno == stored_seqno);
+    throw_unless(102, check_signature(slice_hash(in_msg), sign, public_key));
+
+    accept_message();
+
+    builder data = begin_cell()
+        .store_uint(public_key, 256)
+        .store_uint((stored_seqno + 1) % ((1 << 16) - 1), 16);
+
+    set_data(data.end_cell());
+}
+
+() recv_internal() impure { }
+
+int get_seqno() method_id {
+    slice ds = get_data().begin_parse();
+    return ds.skip_bits(256).preload_uint(16);
+}
+
+int get_public_key() method_id {
+    return get_data().begin_parse().preload_uint(256);
+}

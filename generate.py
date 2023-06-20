@@ -32,7 +32,9 @@ PROCESS_INCLUDE = [
     ("./fif-scripts/export-cfg.fif", "./generated/fif-scripts/export-cfg.fif"),
     ("./fif-scripts/import-cfg.fif", "./generated/fif-scripts/import-cfg.fif"),
     ("./fif-scripts/extmsg-cfg.fif", "./generated/fif-scripts/extmsg-cfg.fif"),
-    ("./fif-scripts/dataof-cfg.fif", "./generated/fif-scripts/dataof-cfg.fif")
+    ("./fif-scripts/dataof-cfg.fif", "./generated/fif-scripts/dataof-cfg.fif"),
+    ("./fif-scripts/extmsg-chk.fif", "./generated/fif-scripts/extmsg-chk.fif"),
+    ("./fif-scripts/dataof-chk.fif", "./generated/fif-scripts/dataof-chk.fif")
 ]
 
 def read_file(filename: str):
@@ -53,8 +55,18 @@ def main():
         text = text.replace("\"Lists.fif\" include", "")
         text = text.replace("namespace Asm", "")
         text = text.replace("Asm definitions", "")
+        
+        out = []
+        for line in text.split('\n'):
+            if line.startswith('// INCLUDE: '):
+                path = line.replace('// INCLUDE: ', '')
+                incl = read_file(path)
+                out.append(incl)
+                continue
 
-        write_file(t, FIF_TEMPLATE % text)
+            out.append(line)
+
+        write_file(t, FIF_TEMPLATE % ('\n'.join(out)))
 
         decl_name = f.split("/")[-1].upper()
         decl_name = decl_name.replace(".", "_")

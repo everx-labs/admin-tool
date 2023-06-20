@@ -20,7 +20,7 @@ python3 generate.py
 ```
 Python 3.10 or newer
 GNU Make 3.81 or newer
-cmake version 3.25 or newer
+cmake version 3.20 or newer
 bash: "GNU bash, version 3.2.57(1)-release" or newer
 OpenSSL (including C header files) version 1.1.1 or later
 build-essential, zlib1g-dev, gperf, libreadline-dev, ccache, libmicrohttpd-dev, libcurl

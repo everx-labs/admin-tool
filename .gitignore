@@ -32,4 +32,5 @@ generated/generated.hpp
 
 # other
 *.log
-
+pw-query.boc
+extmsg-test-req.boc

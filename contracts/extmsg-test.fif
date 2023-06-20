@@ -1,0 +1,57 @@
+// automatically generated from `extmsg-test.fc` incl:`../third-party/ton/crypto/smartcont/stdlib.fc` 
+PROGRAM{
+  DECLPROC recv_external
+  DECLPROC recv_internal
+  77871 DECLMETHOD get_seqno
+  78748 DECLMETHOD get_public_key
+  recv_external PROC:<{
+    9 PUSHPOW2
+    LDSLICEX
+    DUP
+    64 LDU
+    16 LDU
+    DROP
+    SWAP
+    NOW
+    LEQ
+    100 THROWIF
+    c4 PUSH
+    CTOS
+    256 LDU
+    16 LDU
+    DROP
+    s2 s2 XCPU
+    EQUAL
+    101 THROWIFNOT
+    s0 s2 XCHG
+    HASHSU
+    s0 s3 s2 XC2PU
+    CHKSIGNU
+    102 THROWIFNOT
+    ACCEPT
+    SWAP
+    INC
+    16 PUSHPOW2DEC
+    MOD
+    SWAP
+    NEWC
+    256 STU
+    16 STU
+    ENDC
+    c4 POP
+  }>
+  recv_internal PROC:<{
+  }>
+  get_seqno PROC:<{
+    c4 PUSH
+    CTOS
+    8 PUSHPOW2
+    SDSKIPFIRST
+    16 PLDU
+  }>
+  get_public_key PROC:<{
+    c4 PUSH
+    CTOS
+    256 PLDU
+  }>
+}END>c
