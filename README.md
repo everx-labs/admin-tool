@@ -4,19 +4,13 @@ Universal tool for everscale network administration
 
 ## Build
 
-1. Clone the repository 
+### Clone the repository 
 ```bash
 git clone --recurse-submodules https://github.com/tonlabs/admin-tool.git
 cd admin-tool
 ```
 
-2. Run code generation
-
-```bash
-python3 generate.py
-```
-
-3. Install requirements
+### Install requirements
 ```
 Python 3.10 or newer
 GNU Make 3.81 or newer
@@ -27,11 +21,11 @@ build-essential, zlib1g-dev, gperf, libreadline-dev, ccache, libmicrohttpd-dev, 
 g++ or clang (or another C++20 compatible compiler).
 ```
 
-4. Configure and compile
+### Configure and compile
 ```bash
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build . -j 12 --target admin-tool
+cmake --build . -j $(nproc --all) --target admin-tool
 ```
 
 ## License
